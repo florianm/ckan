@@ -66,6 +66,11 @@
             <filter class="solr.LowerCaseFilterFactory"/>
         </analyzer>
     </fieldType>
+    <!-- ckanext.spatial.search_backend = solr-spatial-field -->
+    <fieldType name="location_rpt" class="solr.SpatialRecursivePrefixTreeFieldType"
+        spatialContextFactory="com.spatial4j.core.context.jts.JtsSpatialContextFactory"
+        distErrPct="0.025" maxDistErr="0.000009" units="degrees" />
+    <!-- /solr-spatial-field -->
 </types>
 
 
@@ -134,6 +139,9 @@
     <field name="validated_data_dict" type="string" indexed="false" stored="true" />
 
     <field name="_version_" type="string" indexed="true" stored="true"/>
+    <!-- ckanext.spatial.search_backend = solr-spatial-field -->
+    <field name="spatial_geom"  type="location_rpt" indexed="true" stored="true" multiValued="true" />
+    <!-- /solr-spatial-field -->
 
     <dynamicField name="*_date" type="date" indexed="true" stored="true" multiValued="false"/>
 
