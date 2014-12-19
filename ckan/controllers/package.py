@@ -744,7 +744,8 @@ class PackageController(base.BaseController):
         except NotFound:
             abort(404, _('The dataset {id} could not be found.').format(id=id))
         try:
-            check_access('resource_create', context, pkg_dict)
+            check_access(
+                'resource_create', context, {"package_id": pkg_dict["id"]})
         except NotAuthorized:
             abort(401, _('Unauthorized to create a resource for this package'))
 
@@ -1100,17 +1101,24 @@ class PackageController(base.BaseController):
                    'user': c.user or c.author, 'auth_user_obj': c.userobj}
 
         try:
-            c.resource = get_action('resource_show')(context,
-                                                     {'id': resource_id})
             c.package = get_action('package_show')(context, {'id': id})
-            # required for nav menu
-            c.pkg = context['package']
-            c.pkg_dict = c.package
-            dataset_type = c.pkg.type or 'dataset'
         except NotFound:
-            abort(404, _('Resource not found'))
+            abort(404, _('Dataset not found'))
         except NotAuthorized:
-            abort(401, _('Unauthorized to read resource %s') % id)
+            abort(401, _('Unauthorized to read dataset %s') % id)
+
+        for resource in c.package.get('resources', []):
+            if resource['id'] == resource_id:
+                c.resource = resource
+                break
+        if not c.resource:
+            abort(404, _('Resource not found'))
+
+        # required for nav menu
+        c.pkg = context['package']
+        c.pkg_dict = c.package
+        dataset_type = c.pkg.type or 'dataset'
+
         # get package license info
         license_id = c.package.get('license_id')
         try:
