@@ -990,9 +990,9 @@ class TestAction(WsgiAppCase):
                             params=json.dumps({'id': '749cdcf2-3fc8-44ae-aed0-5eff8cc5032c'}),
                             status=200).body)
 
-        assert resource_status_show in res['help']
+        assert "/api/3/action/help_show?name=resource_status_show" in res['help']
         assert res['success'] is True
-        assert res['result'] == [{"status": "FAILURE", "entity_id": "749cdcf2-3fc8-44ae-aed0-5eff8cc5032c", "task_type": "qa", "last_updated": "2012-04-20T21:32:45.553986", "date_done": "2012-04-20T21:33:01.622557", "entity_type": "resource", "traceback": "Traceback", "value": "51f2105d-85b1-4393-b821-ac11475919d9", "state": None, "key": "celery_task_id", "error": "", "id": "5753adae-cd0d-4327-915d-edd832d1c9a3"}]
+        assert res['result'] == [{"status": None, "entity_id": "749cdcf2-3fc8-44ae-aed0-5eff8cc5032c", "task_type": "qa", "last_updated": "2012-04-20T21:32:45.553986", "date_done": None, "entity_type": "resource", "traceback": None, "value": "51f2105d-85b1-4393-b821-ac11475919d9", "state": None, "key": "celery_task_id", "error": "", "id": "5753adae-cd0d-4327-915d-edd832d1c9a3"}], res['result']
 
     def test_41_missing_action(self):
         try:
@@ -1380,8 +1380,12 @@ class TestActionTermTranslation(WsgiAppCase):
                             status=200)
 
         assert json.loads(res.body)['success']
-        assert json.loads(res.body)['result'] == [{u'lang_code': u'fr', u'term': u'moo', u'term_translation': u'moomoo'},
-                                                  {u'lang_code': u'en', u'term': u'moo', u'term_translation': u'moomoo'}], json.loads(res.body)
+        # sort the result since the order is not important and is implementation
+        # dependent
+        assert sorted(json.loads(res.body)['result']) == sorted(
+            [{u'lang_code': u'fr', u'term': u'moo', u'term_translation': u'moomoo'},
+             {u'lang_code': u'en', u'term': u'moo', u'term_translation': u'moomoo'}]),\
+            json.loads(res.body)
 
     def test_2_update_many(self):
 
@@ -1412,8 +1416,12 @@ class TestActionTermTranslation(WsgiAppCase):
                             extra_environ={'Authorization': str(self.sysadmin_user.apikey)},
                             status=200)
 
-        assert json.loads(res.body)['result'] == [{u'lang_code': u'fr', u'term': u'many', u'term_translation': u'manymoo'},
-                                                  {u'lang_code': u'en', u'term': u'many', u'term_translation': u'manymoomoo'}], json.loads(res.body)
+        # sort the result since the order is not important and is implementation
+        # dependent
+        assert sorted(json.loads(res.body)['result']) == sorted(
+            [{u'lang_code': u'fr', u'term': u'many', u'term_translation': u'manymoo'},
+             {u'lang_code': u'en', u'term': u'many', u'term_translation': u'manymoomoo'}]),\
+            json.loads(res.body)
 
 
 
