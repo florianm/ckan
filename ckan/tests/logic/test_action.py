@@ -52,7 +52,7 @@ class TestAction(WsgiAppCase):
             'resources': [{
                 'description': u'Full text.',
                 'format': u'plain text',
-                'url': u'http://www.annakarenina.com/download/'
+                'url': u'http://datahub.io/download/'
             }]
         }
         package.update(kwargs)
@@ -169,17 +169,17 @@ class TestAction(WsgiAppCase):
                            'format': u'plain text',
                            'hash': u'abc123',
                            'position': 0,
-                           'url': u'http://www.annakarenina.com/download/'},
+                           'url': u'http://datahub.io/download/'},
                           {'alt_url': u'alt345',
                            'description': u'Index of the novel',
                            'extras': {u'alt_url': u'alt345', u'size': u'345'},
                            'format': u'JSON',
                            'hash': u'def456',
                            'position': 1,
-                           'url': u'http://www.annakarenina.com/index.json'}],
+                           'url': u'http://datahub.io/index.json'}],
             'tags': [{'name': u'russian'}, {'name': u'tolstoy'}],
             'title': u'A Novel By Tolstoy',
-            'url': u'http://www.annakarenina.com',
+            'url': u'http://datahub.io',
             'version': u'0.7a'
         }
 
@@ -224,17 +224,17 @@ class TestAction(WsgiAppCase):
                            'format': u'plain text',
                            'hash': u'abc123',
                            'position': 0,
-                           'url': u'http://www.annakarenina.com/download/'},
+                           'url': u'http://datahub.io/download/'},
                           {'alt_url': u'alt345',
                            'description': u'Index of the novel',
                            'extras': {u'alt_url': u'alt345', u'size': u'345'},
                            'format': u'JSON',
                            'hash': u'def456',
                            'position': 1,
-                           'url': u'http://www.annakarenina.com/index.json'}],
+                           'url': u'http://datahub.io/index.json'}],
             'tags': [{'name': u'russian'}, {'name': u'tolstoy'}],
             'title': u'A Novel By Tolstoy',
-            'url': u'http://www.annakarenina.com',
+            'url': u'http://datahub.io',
             'owner_org': organization['id'],
             'version': u'0.7a',
         }
@@ -278,7 +278,7 @@ class TestAction(WsgiAppCase):
             'notes': u'Some test now',
             'tags': [{'name': u'russian'}, {'name': u'tolstoy'}],
             'title': u'A Novel By Tolstoy',
-            'url': u'http://www.annakarenina.com',
+            'url': u'http://datahub.io',
         }
 
         wee = json.dumps(package)
@@ -311,67 +311,6 @@ class TestAction(WsgiAppCase):
                             status=StatusCodes.STATUS_409_CONFLICT)
 
         assert json.loads(res.body)['error'] ==  {"__type": "Validation Error", "created": ["Date format incorrect"]}
-
-
-
-    def test_04_user_list(self):
-        # Create deleted user to make sure he won't appear in the user_list
-        deleted_user = CreateTestData.create_user('deleted_user')
-        deleted_user.delete()
-        model.repo.commit()
-
-        postparams = '%s=1' % json.dumps({})
-        res = self.app.post('/api/action/user_list', params=postparams)
-        res_obj = json.loads(res.body)
-        assert "/api/3/action/help_show?name=user_list" in res_obj['help']
-        assert res_obj['success'] == True
-        assert len(res_obj['result']) == 7
-        assert res_obj['result'][0]['name'] == 'annafan'
-        assert res_obj['result'][0]['about'] == 'I love reading Annakarenina. My site: http://anna.com'
-        assert not 'apikey' in res_obj['result'][0]
-
-    def test_05_user_show(self):
-        # Anonymous request
-        postparams = '%s=1' % json.dumps({'id':'annafan'})
-        res = self.app.post('/api/action/user_show', params=postparams)
-        res_obj = json.loads(res.body)
-        assert "/api/3/action/help_show?name=user_show" in res_obj['help']
-        assert res_obj['success'] == True
-        result = res_obj['result']
-        assert result['name'] == 'annafan'
-        assert result['about'] == 'I love reading Annakarenina. My site: http://anna.com'
-        assert 'created' in result
-        assert 'display_name' in result
-        assert 'number_created_packages' in result
-        assert 'number_of_edits' in result
-        assert not 'apikey' in result
-        assert not 'reset_key' in result
-
-        # Same user can see his api key
-        res = self.app.post('/api/action/user_show', params=postparams,
-                            extra_environ={'Authorization': str(self.normal_user.apikey)})
-
-        res_obj = json.loads(res.body)
-        result = res_obj['result']
-        assert result['name'] == 'annafan'
-        assert 'apikey' in result
-
-        # Sysadmin user can see everyone's api key
-        res = self.app.post('/api/action/user_show', params=postparams,
-                            extra_environ={'Authorization': str(self.sysadmin_user.apikey)})
-
-        res_obj = json.loads(res.body)
-        result = res_obj['result']
-        assert result['name'] == 'annafan'
-        assert 'apikey' in result
-
-    def test_05b_user_show_datasets(self):
-        postparams = '%s=1' % json.dumps({'id':'annafan', 'include_datasets': True})
-        res = self.app.post('/api/action/user_show', params=postparams)
-        res_obj = json.loads(res.body)
-        result = res_obj['result']
-        datasets = result['datasets']
-        assert_equal(len(datasets), 0)  # No datasets created
 
 
     def test_10_user_create_parameters_missing(self):
@@ -579,10 +518,10 @@ class TestAction(WsgiAppCase):
                 'format': u'plain text',
                 'hash': u'abc123',
                 'position': 0,
-                'url': u'http://www.annakarenina.com/download/'
+                'url': u'http://datahub.io/download/'
             }],
             'title': u'A Novel By Tolstoy',
-            'url': u'http://www.annakarenina.com',
+            'url': u'http://datahub.io',
         }
 
         postparams = '%s=1' % json.dumps(package)
@@ -780,11 +719,6 @@ class TestAction(WsgiAppCase):
         postparams = '%s=1' % json.dumps({'id': resource.id})
         res = self.app.post('/api/action/resource_show', params=postparams)
         result = json.loads(res.body)['result']
-
-        # Remove tracking data from the result dict. This tracking data is
-        # added by the logic, so the other resource dict taken straight from
-        # resource_dictize() won't have it.
-        del result['tracking_summary']
 
         resource_dict = resource_dictize(resource, {'model': model})
         assert result == resource_dict, (result, resource_dict)
@@ -1628,7 +1562,7 @@ class TestResourceAction(WsgiAppCase):
             'resources': [{
                 'description': u'Full text.',
                 'format': u'plain text',
-                'url': u'http://www.annakarenina.com/download/'
+                'url': u'http://datahub.io/download/'
             }]
         }
         package.update(kwargs)
@@ -1731,7 +1665,7 @@ class TestRelatedAction(WsgiAppCase):
             'resources': [{
                 'description': u'Full text.',
                 'format': u'plain text',
-                'url': u'http://www.annakarenina.com/download/'
+                'url': u'http://datahub.io/download/'
             }]
         }
         package.update(kwargs)
