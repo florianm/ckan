@@ -70,6 +70,7 @@
 
 
 {% block secondary_content %}
+{% snippet "spatial/snippets/spatial_query.html", default_extent=[[-35, 115], [-10, 130]] %}
 <div class="filters">
   <div>
     {% for facet in c.facet_titles %}
