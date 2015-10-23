@@ -15,7 +15,11 @@
 
 {% block content_primary_nav %}
   {{ h.build_nav_icon('organization_read', _('Datasets'), id=c.group_dict.name) }}
+<<<<<<< HEAD
   {{ h.build_nav_icon('organization_activity', _('Activity Stream'), id=c.group_dict.name, offset=1) }}
+=======
+  {{ h.build_nav_icon('organization_activity', _('Activity Stream'), id=c.group_dict.name, offset=0) }}
+>>>>>>> upstream/master
   {{ h.build_nav_icon('organization_about', _('About'), id=c.group_dict.name) }}
 {% endblock %}
 
